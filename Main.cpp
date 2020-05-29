@@ -1,0 +1,218 @@
+
+#include "Header.h"
+
+int Counter(const char* filename) 
+{
+	int count = 0;
+	char tmp;
+
+	ifstream counter_file(filename);
+
+	while (!counter_file.eof()) 
+	{
+		counter_file.get(tmp);
+
+		if (tmp == ' ')
+			count++;
+		if (tmp == '\n') 
+			break;
+	}
+
+	count++;
+	counter_file.close();
+
+	return count;
+}
+
+int menu();
+
+int main()
+{
+	int n = Counter("Matrix1.TXT");
+
+	int key = 0;
+
+	bool isRunning = 1;
+
+	int** Matrix_1 = Matrix_creator(n);
+	int** Matrix_2 = Matrix_creator(n);
+
+	Matrix_1 = Read_from_file("Matrix1.TXT", n);
+	Matrix_2 = Read_from_file("Matrix2.TXT", n);
+
+	NodeList* matr_1 = new NodeList;
+	NodeList* matr_2 = new NodeList;
+	NodeList** matr_sq_1 = new NodeList * [n];
+	NodeList** matr_sq_2 = new NodeList * [n];
+	NodeList** summ_sq = new NodeList * [n];
+	NodeList** mult_sq = new NodeList * [n];
+	NodeList* summ = new NodeList;
+
+	while (isRunning) 
+	{
+		key = menu();
+
+		switch (key) 
+		{
+		case 0: 
+		{
+			matr_1 = Linked_storage(Matrix_1, n);
+			matr_2 = Linked_storage(Matrix_2, n);
+
+			cout << "Linked storaged matrix :\n\n";
+
+			Print_matrix_linked(matr_1, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 1: 
+		{
+			matr_sq_1 = Sequential_linked_storage(Matrix_1, n);
+			matr_sq_2 = Sequential_linked_storage(Matrix_2, n);
+
+			cout << "Sequential-linked index storaged matrix :\n\n";
+
+			Print_matrix_sequential(matr_sq_1, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 2: 
+		{
+			matr_1 = Linked_storage(Matrix_1, n);
+			matr_2 = Linked_storage(Matrix_2, n);
+
+			summ = Summ_2_matrix(matr_1, matr_2, n);
+
+			cout << "Linked storaged matrix-summ :\n\n";
+
+			Print_matrix_linked(summ, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 3: 
+		{
+			matr_sq_1 = Sequential_linked_storage(Matrix_1, n);
+			matr_sq_2 = Sequential_linked_storage(Matrix_2, n);
+
+			summ_sq = Summ_2_matrix_sequential(matr_sq_1, matr_sq_2, n);
+
+			cout << "Sequential-linked index storaged matrix-summ :\n\n";
+
+			Print_matrix_sequential(summ_sq, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 4: 
+		{
+			cout << "Matrix-multiplication :\n\n";
+
+			matr_sq_1 = Sequential_linked_storage(Matrix_1, n);
+			Print_matrix_sequential(matr_sq_1, n);
+			cout << '*' << endl;
+
+			matr_sq_2 = Sequential_linked_storage(Matrix_2, n);
+			Print_matrix_sequential(matr_sq_2, n);
+			matr_sq_2 = Sequential_linked_storage_reverse(Matrix_2, n);
+
+			mult_sq = Matr_multiplication(matr_sq_1, matr_sq_2, n);
+			Print_matrix_sequential(mult_sq, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 5: 
+		{
+			n = Counter("MatrixInput.TXT");
+
+			Matrix_1 = Read_from_file("MatrixInput.TXT", n);
+			matr_sq_1 = Sequential_linked_storage(Matrix_1, n);
+			Print_matrix_sequential(matr_sq_1, n);
+			cout << "\t   " << '*' << endl;
+
+			matr_sq_2 = Sequential_linked_storage(Matrix_1, n);
+			Print_matrix_sequential(matr_sq_2, n);
+			matr_sq_2 = Sequential_linked_storage_reverse(Matrix_1, n);
+
+			mult_sq = Matr_multiplication(matr_sq_1, matr_sq_2, n);
+			cout << '\n' << "\t   =\n\n";
+
+			Print_matrix_sequential(mult_sq, n);
+
+			cout << endl;
+
+			system("pause");
+			break;
+		}
+		case 6: 
+		{
+			for (int i = 0; i < n; ++i) 
+			{
+				delete Matrix_1[i], Matrix_2[i], matr_sq_1[i], matr_sq_2[i], summ_sq[i], mult_sq[i];
+			}
+			delete matr_1, matr_2, Matrix_1, Matrix_2, matr_sq_1, matr_sq_2, summ_sq, mult_sq;
+			isRunning = 0;
+		}
+		}
+	}
+	return 0;
+}
+
+int menu() 
+{
+	int key = 0;
+	int code;
+
+	do 
+	{
+		system("cls");
+
+		key = (key + 7) % 7;
+
+		if (key == 0) cout << "-> Linked storage" << endl;
+		else  cout << "   Linked storage" << endl;
+
+		if (key == 1) cout << "-> Sequentially linked index storage" << endl;
+		else  cout << "   Sequentially linked index storage" << endl;
+
+		if (key == 2) cout << "-> Matrix-Summ" << endl;
+		else  cout << "   Matrix-Summ" << endl;
+
+		if (key == 3) cout << "-> Sequential-Matrix-Sum" << endl;
+		else  cout << "   Sequential-Matrix-Sum" << endl;
+
+		if (key == 4) cout << "-> Multiplication of two blow-off matrices" << endl;
+		else  cout << "   Multiplication of two blow-off matrices" << endl;
+
+		if (key == 5) cout << "-> Multiplication of two usual matrices" << endl;
+		else  cout << "   Multiplication of two usual matrices" << endl;
+
+		if (key == 6) cout << "-> Exit" << endl;
+		else  cout << "   Exit" << endl;
+
+		code = _getch();
+
+		if (code == 224)
+		{
+			code = _getch();
+
+			if (code == 80) key++;
+			if (code == 72) key--;
+		}
+	} while (code != 13);
+	system("cls");
+	return key;
+}
